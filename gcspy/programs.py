@@ -37,6 +37,9 @@ class ConvexProgram:
     def to_conic(self):
         self.conic = ConicProgram(self.constraints, self.cost)
 
+    def to_cvxpy_prog(self):
+        return cp.Problem(cp.Minimize(self.cost), self.constraints)
+
     def _verify_variables(self, variables):
         raise NotImplementedError
 
@@ -80,7 +83,7 @@ class ConicProgram:
 
         # constraints
         cols = conic_prob.c.shape[0]
-        Ab = conic_prob.A.toarray().reshape((-1, cols), order='F')
+        Ab = conic_prob.A.toarray().reshape((-1, cols), order="F")
         # TODO: convert to sparse format
         self.A = []
         self.b = []
@@ -122,11 +125,11 @@ class ConicProgram:
     @staticmethod
     def constrain_in_cone(x, K):
         if K == cp.constraints.Zero:
-             return cp.constraints.Zero(x)
+            return cp.constraints.Zero(x)
         elif K == cp.constraints.NonNeg:
-             return cp.constraints.NonNeg(x)
+            return cp.constraints.NonNeg(x)
         elif K == cp.constraints.NonPos:
-             return cp.constraints.NonPos(x)
+            return cp.constraints.NonPos(x)
         elif K == cp.constraints.SOC:
             return cp.constraints.SOC(x[0], x[1:])
         elif K == cp.constraints.PSD:

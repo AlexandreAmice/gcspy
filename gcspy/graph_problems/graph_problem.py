@@ -2,7 +2,10 @@ import cvxpy as cp
 import numpy as np
 
 
-def graph_problem(gcs, problem, callback=None):
+def graph_problem(gcs, problem, callback=None, *args, **kwargs):
+    """
+    args and kwargs are forwarded to cvxpy.solve
+    """
 
     # compute conic programs on edges and vertices
     gcs.to_conic()
@@ -22,28 +25,32 @@ def graph_problem(gcs, problem, callback=None):
     constraints = []
 
     for i, v in enumerate(gcs.vertices):
-        
+
         # cost on the vertices including domain constraint
         cost += v.conic.eval_cost(zv[i], yv[i])
         constraints += v.conic.eval_constraints(zv[i], yv[i])
-        
+
     for k, e in enumerate(gcs.edges):
-        
+
         # cost on the edges including domain constraint
         cost += e.conic.eval_cost(ze[k], ye[k])
         constraints += e.conic.eval_constraints(ze[k], ye[k])
         constraints += e.tail.conic.eval_constraints(ze_out[k], ye[k])
         constraints += e.head.conic.eval_constraints(ze_inc[k], ye[k])
-        
-        # euqate auxiliary variables on the egdes
+
+        # equate auxiliary variables on the egdes
         for variable in e.tail.variables:
             ze_var = e.conic.select_variable(variable, ze[k], reshape=False)
-            ze_out_var = e.tail.conic.select_variable(variable, ze_out[k], reshape=False)
+            ze_out_var = e.tail.conic.select_variable(
+                variable, ze_out[k], reshape=False
+            )
             if ze_var is not None and ze_out_var is not None:
                 constraints.append(ze_var == ze_out_var)
         for variable in e.head.variables:
             ze_var = e.conic.select_variable(variable, ze[k], reshape=False)
-            ze_inc_var = e.head.conic.select_variable(variable, ze_inc[k], reshape=False)
+            ze_inc_var = e.head.conic.select_variable(
+                variable, ze_inc[k], reshape=False
+            )
             if ze_var is not None and ze_inc_var is not None:
                 constraints.append(ze_var == ze_inc_var)
 
@@ -52,7 +59,7 @@ def graph_problem(gcs, problem, callback=None):
 
     # solve problem
     prob = cp.Problem(cp.Minimize(cost), constraints)
-    prob.solve()
+    prob.solve(*args, **kwargs)
     if callback is not None:
         while True:
             new_constraints = callback(yv, ye)
@@ -62,7 +69,7 @@ def graph_problem(gcs, problem, callback=None):
             prob = cp.Problem(cp.Minimize(cost), constraints)
             prob.solve()
 
-    if prob.status == 'optimal':
+    if prob.status == "optimal":
         tol = 1e-4
 
         # set values for vertices
