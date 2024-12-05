@@ -54,8 +54,8 @@ def graph_problem(gcs, problem, callback=None, *args, **kwargs):
             if ze_var is not None and ze_inc_var is not None:
                 constraints.append(ze_var == ze_inc_var)
 
-    probelm_specific_constraints = problem(gcs, xv, zv, ze_out, ze_inc)
-    constraints += probelm_specific_constraints
+    problem_specific_constraints = problem(gcs, xv, zv, ze_out, ze_inc)
+    constraints += problem_specific_constraints
 
     # solve problem
     prob = cp.Problem(cp.Minimize(cost), constraints)
