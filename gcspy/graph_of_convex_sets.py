@@ -10,6 +10,7 @@ from gcspy.graph_problems import (
     spanning_tree,
     facility_location,
 )
+import networkx as nx
 
 
 class Vertex(ConvexProgram):
@@ -59,22 +60,37 @@ class Edge(ConvexProgram):
 class GraphOfConvexSets:
 
     def __init__(self):
-        self.vertices = []
-        self.edges = []
+        self.graph = nx.DiGraph()
+
+    @property
+    def vertices(self):
+        return list(self.graph.nodes)
+
+    @property
+    def edges(self):
+        return list(nx.get_edge_attributes(self.graph, "prog").values())
 
     def add_vertex(self, name=""):
         vertex = Vertex(name)
-        self.vertices.append(vertex)
+        self.graph.add_node(vertex)
         return vertex
 
     def add_edge(self, tail, head):
         edge = Edge(tail, head)
-        self.edges.append(edge)
+        self.graph.add_edge(tail, head, prog=edge)
         return edge
 
+    def remove_vertex(self, vertex):
+        """
+        remove the vertex and all associated edges
+        """
+        self.graph.remove_node(vertex)
+
+    def remove_edge(self, edge):
+        self.graph.remove_edge(edge.tail, edge.head)
+
     def add_subgraph(self, gcs):
-        self.vertices += gcs.vertices
-        self.edges += gcs.edges
+        self.graph = nx.compose(self.graph, gcs.graph)
 
     def get_edge(self, tail, head):
         for edge in self.edges:

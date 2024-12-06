@@ -5,7 +5,7 @@ from numbers import Number
 
 class ConvexProgram:
 
-    var_attributes = ["nonneg", "nonpos", "symmetric", "PSD", "NSD"]
+    var_attributes = ["nonneg", "nonpos", "symmetric", "PSD", "NSD", "name"]
 
     def __init__(self):
         self.variables = []

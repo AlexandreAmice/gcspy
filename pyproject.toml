@@ -1,17 +1,18 @@
-[build-system]
-requires = ["setuptools", "wheel"]  # Add "setuptools-scm" if you use it for versioning
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "gcspy"
 version = "0.1.0"
 description = "Library based on CVXPY to solve optimization problems in Graphs of Convex Sets (GCS). The techniques implemented here are based on the paper Shortest Paths in Graphs of Convex Sets by Tobia Marcucci, Jack Umenberger, Pablo A. Parrilo, and Russ Tedrake."
-authors = [
-    { name = "Tobia Marcucci"}
-]
-dependencies = [
-    "cvxpy >= 1.5"
+authors = ["Tobia Marcucci"]
+packages = [
+    { include = "gcspy" },
+    { include = "example_problems"}
 ]
 
-[tool.setuptools.packages.find]
-where = ["gcspy"]
+[tool.poetry.dependencies]
+python = "^3.9"
+cvxpy = "^1.5"
+graphviz = "^0.20"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
