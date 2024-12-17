@@ -25,7 +25,6 @@ def graph_problem(gcs, problem, callback=None, *args, **kwargs):
     constraints = []
 
     for i, v in enumerate(gcs.vertices):
-
         # cost on the vertices including domain constraint
         cost += v.conic.eval_cost(zv[i], yv[i])
         constraints += v.conic.eval_constraints(zv[i], yv[i])
@@ -38,7 +37,7 @@ def graph_problem(gcs, problem, callback=None, *args, **kwargs):
         constraints += e.tail.conic.eval_constraints(ze_out[k], ye[k])
         constraints += e.head.conic.eval_constraints(ze_inc[k], ye[k])
 
-        # equate auxiliary variables on the egdes
+        # equate auxiliary variables on the edges
         for variable in e.tail.variables:
             ze_var = e.conic.select_variable(variable, ze[k], reshape=False)
             ze_out_var = e.tail.conic.select_variable(
@@ -76,7 +75,9 @@ def graph_problem(gcs, problem, callback=None, *args, **kwargs):
         for i, vertex in enumerate(gcs.vertices):
             if prob.status == "optimal" and vertex.y.value > tol:
                 for variable in vertex.variables:
-                    variable.value = vertex.conic.select_variable(variable, xv[i].value)
+                    # variable.value = vertex.conic.select_variable(variable, xv[i].value)
+                    zv_var = vertex.conic.select_variable(variable, zv[i].value)
+                    variable.value = zv_var / vertex.y.value
             else:
                 vertex.y.value = None
                 for variable in vertex.variables:

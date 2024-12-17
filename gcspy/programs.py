@@ -7,12 +7,12 @@ class ConvexProgram:
 
     var_attributes = ["nonneg", "nonpos", "symmetric", "PSD", "NSD", "name"]
 
-    def __init__(self):
+    def __init__(self, name="", convex_relaxation=False):
         self.variables = []
         self.constraints = []
         self.cost = 0
         self.conic = None
-        self.y = cp.Variable(boolean=True)
+        self.y = cp.Variable(name=f"y{name}", boolean=not convex_relaxation)
 
     def add_variable(self, shape, **kwargs):
         for attribute in kwargs:
@@ -31,7 +31,8 @@ class ConvexProgram:
             self.add_constraint(constraint)
 
     def add_cost(self, cost):
-        self._verify_variables(cost.variables())
+        if isinstance(cost, cp.expressions.expression.Expression):
+            self._verify_variables(cost.variables())
         self.cost += cost
 
     def to_conic(self):
@@ -41,7 +42,8 @@ class ConvexProgram:
         return cp.Problem(cp.Minimize(self.cost), self.constraints)
 
     def _verify_variables(self, variables):
-        raise NotImplementedError
+        # raise NotImplementedError
+        pass
 
 
 class ConicProgram:
@@ -66,6 +68,8 @@ class ConicProgram:
         chain = prob._construct_chain(solver_opts=solver_opts)
         chain.reductions = chain.reductions[:-1]
         conic_prob = chain.apply(prob)[0]
+
+        self.variables = conic_prob.variables
 
         # dictionary that maps variables in the conic program to their indices
         self.columns = {}
@@ -138,3 +142,27 @@ class ConicProgram:
             return cp.constraints.PSD(x_mat)
         else:
             raise NotImplementedError
+
+    def __repr__(self):
+        return f"ConicProgram({self.A}, {self.b}, {self.K}, {self.c}, {self.d})"
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class GraphProblemConstraints(ConicProgram):
+    def __init__(self, constraints, vertex_binaries, edge_binaries):
+        super().__init__(constraints, 0)
+        self.vertex_binaries = vertex_binaries
+        self.edge_binaries = edge_binaries
+
+        # First we shuffle the columns of A so that it reads A * [vertex_binaries,
+        # edge_binaries, aux_variables]
+
+        variable_to_columns = self.columns.copy()
+        columns_to_variables = {v: k for k, v in variable_to_columns.items()}
+        # perm = sorted(self.columns.values(), key=lambda x: find(columns_to_variables[x])
+
+    @property
+    def binaries(self):
+        return self.vertex_binaries + self.edge_binaries

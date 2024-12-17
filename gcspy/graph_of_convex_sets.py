@@ -11,12 +11,13 @@ from gcspy.graph_problems import (
     facility_location,
 )
 import networkx as nx
+import typing
 
 
 class Vertex(ConvexProgram):
 
-    def __init__(self, name=""):
-        super().__init__()
+    def __init__(self, name="", convex_relaxation=False):
+        super().__init__(name, convex_relaxation)
         self.name = name
 
     def _verify_variables(self, variables):
@@ -39,28 +40,43 @@ class Vertex(ConvexProgram):
             variable.value = value
         return feasible_point
 
+    def __repr__(self):
+        return f"{self.name}: ({self.variables})"
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class Edge(ConvexProgram):
 
-    def __init__(self, tail, head):
-        super().__init__()
+    def __init__(self, tail, head, convex_relaxation=False):
         self.tail = tail
         self.head = head
-        self.conic_program = None
         self.name = (self.tail.name, self.head.name)
+        super().__init__(self.name, convex_relaxation)
+
+    @property
+    def edge_variables(self):
+        return self.variables + self.tail.variables + self.head.variables
 
     def _verify_variables(self, variables):
-        edge_variables = self.variables + self.tail.variables + self.head.variables
-        ids0 = {variable.id for variable in edge_variables}
+        ids0 = {variable.id for variable in self.edge_variables}
         ids1 = {variable.id for variable in variables}
         if not ids0 >= ids1:
             raise ValueError("A variable does not belong to this edge.")
 
+    def __repr__(self):
+        return f"({self.name}\n{self.constraints=}"
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class GraphOfConvexSets:
 
-    def __init__(self):
+    def __init__(self, convex_relaxation=False):
         self.graph = nx.DiGraph()
+        self.convex_relaxation = convex_relaxation
 
     @property
     def vertices(self):
@@ -71,14 +87,20 @@ class GraphOfConvexSets:
         return list(nx.get_edge_attributes(self.graph, "prog").values())
 
     def add_vertex(self, name=""):
-        vertex = Vertex(name)
+        vertex = Vertex(name, self.convex_relaxation)
         self.graph.add_node(vertex)
         return vertex
 
+    def append_vertex(self, vertex):
+        self.graph.add_node(vertex)
+
     def add_edge(self, tail, head):
-        edge = Edge(tail, head)
+        edge = Edge(tail, head, self.convex_relaxation)
         self.graph.add_edge(tail, head, prog=edge)
         return edge
+
+    def append_edge(self, edge):
+        self.graph.add_edge(edge.tail, edge.head, prog=edge)
 
     def remove_vertex(self, vertex):
         """
