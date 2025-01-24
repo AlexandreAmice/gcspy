@@ -1,10 +1,11 @@
 import numpy as np
 import cvxpy as cp
 from numbers import Number
+from itertools import count
 
 
 class ConvexProgram:
-
+    __id__ = count()
     var_attributes = ["nonneg", "nonpos", "symmetric", "PSD", "NSD", "name"]
 
     def __init__(self, name="", convex_relaxation=False):
