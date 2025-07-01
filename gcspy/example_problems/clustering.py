@@ -5,8 +5,9 @@ import cvxpy as cp
 
 def make_movie_clustering_problem(n_movies, n_categories, n_clusters, scores=None):
     """
-    Assign n_movies to n_clusters. The movies are scored in n_categories and assigned to clusters in such a way
-    that each the distance of each movie to it's cluster is minimized.
+    Assign n_movies to n_clusters. The movies are scored in n_categories and assigned to
+    clusters in such a way that each the distance of each movie to it's cluster is
+    minimized.
 
     Solve this problem as a facility location problem.
     """

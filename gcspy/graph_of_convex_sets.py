@@ -104,7 +104,7 @@ class GraphOfConvexSets:
 
     def remove_vertex(self, vertex):
         """
-        remove the vertex and all associated edges
+        Remove the vertex and all associated edges.
         """
         self.graph.remove_node(vertex)
 

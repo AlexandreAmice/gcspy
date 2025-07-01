@@ -4,7 +4,7 @@ import numpy as np
 
 def graph_problem(gcs, problem, callback=None, *args, **kwargs):
     """
-    args and kwargs are forwarded to cvxpy.solve
+    Args and kwargs are forwarded to cvxpy.solve.
     """
 
     # compute conic programs on edges and vertices

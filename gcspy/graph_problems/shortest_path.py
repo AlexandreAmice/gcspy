@@ -38,8 +38,9 @@ def shortest_path(gcs, xv, zv, ze_out, ze_inc, s, t):
 
 def get_shortest_path_constraints(gcs, s, t):
     """
-    Returns a dictionary mapping gcs vertices to vertex-separable constraints. The
-    special value None is all the constraints which are not vertex separable
+    Returns a dictionary mapping gcs vertices to vertex-separable constraints.
+
+    The special value None is all the constraints which are not vertex separable
     """
     yv = gcs.vertex_binaries()
     ye = gcs.edge_binaries()

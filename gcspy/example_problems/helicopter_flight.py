@@ -18,11 +18,10 @@ def make_helicopter_flight_problem(
     """
     Plan the flight of a helicopter from helicopter_initial_position to
     helicopter_desired_position. The helicopter flies at a constant speed
-    helicopter_speed with a battery that decreases at a rate
-    battery_decrease_rate with a maximum capacity of max_battery_charge. To
-    recharge the battery the helicopter must land on one of the num_island
-    islands to recharge its battery at a rate of battery_recharge_rate. The
-    objective is to arrive at the target as fast as possible.
+    helicopter_speed with a battery that decreases at a rate battery_decrease_rate with
+    a maximum capacity of max_battery_charge. To recharge the battery the helicopter
+    must land on one of the num_island islands to recharge its battery at a rate of
+    battery_recharge_rate. The objective is to arrive at the target as fast as possible.
 
     Solve this problem as a shortest path problem.
     """

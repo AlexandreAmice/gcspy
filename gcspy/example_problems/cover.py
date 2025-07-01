@@ -5,12 +5,12 @@ from gcspy import GraphOfConvexSets
 
 def make_set_cover_problem(mesh, n_spheres, r_max, alpha):
     """
-    Given a mesh of 2D triangles, cover the vertices of the mesh with at most
-    n_spheres of radius no larger than r_max such that each triangle is completely covered by at least one
-    sphere.
+    Given a mesh of 2D triangles, cover the vertices of the mesh with at most n_spheres
+    of radius no larger than r_max such that each triangle is completely covered by at
+    least one sphere.
 
-    One pays a fixed cost of alpha for every sphere used as well as a cost equal to the area of that sphere.
-    The objective is to minimize this cost.
+    One pays a fixed cost of alpha for every sphere used as well as a cost equal to the
+    area of that sphere. The objective is to minimize this cost.
 
     Solve this problem as a facility location problem.
     """
