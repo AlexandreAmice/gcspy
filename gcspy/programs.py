@@ -13,7 +13,10 @@ class ConvexProgram:
         self.constraints = []
         self.cost = 0
         self.conic = None
-        self.y = cp.Variable(name=f"y{name}", boolean=not convex_relaxation)
+        if convex_relaxation:
+            self.y = cp.Variable(name=f"y{name}", pos=True)
+        else:
+            self.y = cp.Variable(name=f"y{name}", boolean=True)
 
     def add_variable(self, shape, **kwargs):
         for attribute in kwargs:
