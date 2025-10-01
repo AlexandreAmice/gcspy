@@ -103,6 +103,7 @@ class ConicProgram:
             self.b.append(Ab[first_row:last_row, -1])
             self.K.append(type(cone))
             first_row = last_row
+        pass
 
     def eval_cost(self, x, t=1):
         return self.c @ x + self.d * t

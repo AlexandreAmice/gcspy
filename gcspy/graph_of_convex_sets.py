@@ -57,7 +57,7 @@ class Edge(ConvexProgram):
 
     @property
     def edge_variables(self):
-        return self.variables + self.tail.variables + self.head.variables
+        return self.tail.variables + self.head.variables + self.variables
 
     def _verify_variables(self, variables):
         ids0 = {variable.id for variable in self.edge_variables}

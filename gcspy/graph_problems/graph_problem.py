@@ -6,7 +6,7 @@ def graph_problem(gcs, problem, callback=None, *args, **kwargs):
     """
     Args and kwargs are forwarded to cvxpy.solve.
     """
-
+    return_all = kwargs.pop("return_all", False)
     # compute conic programs on edges and vertices
     gcs.to_conic()
 
@@ -93,5 +93,6 @@ def graph_problem(gcs, problem, callback=None, *args, **kwargs):
                 edge.y.value = None
                 for variable in edge.variables:
                     variable.value = None
-
+    if return_all:
+        return prob, yv, ye, xv, zv, ze, ze_out, ze_inc
     return prob
