@@ -54,7 +54,7 @@ for i in range(maze_side):
                 # Enforce trajectory continuity.
                 end_tail = tail.variables[0][1]
                 start_head = head.variables[0][0]
-                edge.add_constraint(end_tail == start_head) 
+                edge.add_constraint(end_tail == start_head)
 
 # Select source and target vertices.
 source = graph.get_vertex((0, 0))
@@ -65,7 +65,7 @@ target = graph.get_vertex((maze_side - 1, maze_side - 1))
 if __name__ == "__main__":
 
     # Solve problem.
-    graph.solve_shortest_path(source, target)
+    ret = graph.solve_shortest_path(source, target, binary=False)
     print("Problem status:", graph.status)
     print("Optimal value:", graph.value)
 
@@ -74,5 +74,5 @@ if __name__ == "__main__":
     maze.plot()
     for vertex in graph.vertices:
         if np.isclose(vertex.binary_variable.value, 1):
-            plt.plot(*vertex.variables[0].value.T, 'b--')
+            plt.plot(*vertex.variables[0].value.T, "b--")
     plt.show()

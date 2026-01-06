@@ -248,7 +248,7 @@ class GraphOfConicSets(Graph):
 
     def solve_shortest_path(self, source, target, binary=True, tol=1e-4, **kwargs):
         if self.directed:
-            shortest_path(self, source, target, binary, tol, **kwargs)
+            return shortest_path(self, source, target, binary, tol, **kwargs)
         else:
             raise NotImplementedError
 
