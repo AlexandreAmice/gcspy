@@ -1,6 +1,10 @@
 import cvxpy as cp
-from gcsopt.graph_problems.utils import (define_variables,
-    enforce_edge_programs, set_solution)
+from gcsopt.graph_problems.utils import (
+    define_variables,
+    enforce_edge_programs,
+    set_solution,
+)
+
 
 def shortest_path(conic_graph, source, target, binary, tol, **kwargs):
 
@@ -37,9 +41,11 @@ def shortest_path(conic_graph, source, target, binary, tol, **kwargs):
                 yv[i] == sum(ye[inc]),
                 yv[i] == sum(ye[out]),
                 zv[i] == sum(ze_head[inc]),
-                zv[i] == sum(ze_tail[out])]
-           
+                zv[i] == sum(ze_tail[out]),
+            ]
+
     # Solve problem and set solution.
     prob = cp.Problem(cp.Minimize(cost), constraints)
     prob.solve(**kwargs)
     set_solution(conic_graph, prob, ye, ze, yv, zv, tol)
+    return prob, zv, yv, ze, ye
